@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ishaan Saxena</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--c-black:#080808;
+--c-white:#f4f0e8;
+--c-cream:#ede8dc;
+--c-gold:#c8a96e;
+--c-rust:#8b3a1e;
+--c-dim:#1a1a18;
+--c-mid:#2e2e2a;
+--c-muted:#6a6860;
+--font-display:'Bebas Neue',sans-serif;
+--font-body:'Cormorant Garamond',serif;
+--font-mono:'DM Mono',monospace;
+}
+html{scroll-behavior:smooth;background:var(--c-black)}
+body{background:var(--c-black);color:var(--c-white);font-family:var(--font-body);overflow-x:hidden;cursor:none}
+
+/* CURSOR */
+#cursor{position:fixed;width:8px;height:8px;background:var(--c-gold);border-radius:50%;pointer-events:none;z-index:9999;transition:transform 0.15s ease,opacity 0.2s ease;mix-blend-mode:difference}
+#cursor-trail{position:fixed;width:36px;height:36px;border:0.5px solid var(--c-gold);border-radius:50%;pointer-events:none;z-index:9998;transition:transform 0.4s cubic-bezier(0.19,1,0.22,1),opacity 0.3s;opacity:0.4;mix-blend-mode:difference}
+
+/* GRAIN */
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");opacity:0.35;pointer-events:none;z-index:9990;animation:grain 0.5s steps(2) infinite}
+@keyframes grain{0%{transform:translate(0,0)}25%{transform:translate(-1%,-1%)}50%{transform:translate(1%,0)}75%{transform:translate(-1%,1%)}100%{transform:translate(0,0)}}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:2rem 3rem;display:flex;justify-content:space-between;align-items:center;mix-blend-mode:normal}
+.nav-logo{font-family:var(--font-display);font-size:1.1rem;letter-spacing:0.15em;color:var(--c-gold);opacity:0}
+.nav-links{display:flex;gap:2.5rem;list-style:none}
+.nav-links a{font-family:var(--font-mono);font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--c-muted);text-decoration:none;transition:color 0.3s}
+.nav-links a:hover{color:var(--c-gold)}
+.nav-index{font-family:var(--font-mono);font-size:0.65rem;color:var(--c-muted);letter-spacing:0.15em}
+
+/* HERO */
+#hero{height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:4rem 3rem;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:linear-gradient(160deg,#0d0c0a 0%,#1a1208 40%,#0a0805 100%);z-index:0}
+.hero-vignette{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 30%,rgba(0,0,0,0.85) 100%);z-index:1}
+.hero-lines{position:absolute;inset:0;z-index:1;overflow:hidden}
+.hero-lines::before{content:'';position:absolute;top:-50%;left:30%;width:0.5px;height:200%;background:linear-gradient(180deg,transparent,rgba(200,169,110,0.12),transparent);transform:rotate(-15deg)}
+.hero-lines::after{content:'';position:absolute;top:-50%;left:65%;width:0.5px;height:200%;background:linear-gradient(180deg,transparent,rgba(200,169,110,0.07),transparent);transform:rotate(-8deg)}
+.hero-content{position:relative;z-index:2}
+.hero-tag{font-family:var(--font-mono);font-size:0.6rem;letter-spacing:0.35em;text-transform:uppercase;color:var(--c-gold);margin-bottom:1.5rem;opacity:0;transform:translateY(10px)}
+.hero-name{font-family:var(--font-display);font-size:clamp(5rem,14vw,13rem);line-height:0.88;letter-spacing:0.02em;color:var(--c-white);opacity:0;transform:translateY(40px)}
+.hero-name span{color:var(--c-gold)}
+.hero-sub{font-family:var(--font-body);font-style:italic;font-size:clamp(1.1rem,2.5vw,1.8rem);color:var(--c-cream);opacity:0.7;margin-top:1.5rem;opacity:0;transform:translateY(20px);font-weight:300}
+.hero-meta{display:flex;gap:3rem;margin-top:3rem;padding-top:2rem;border-top:0.5px solid rgba(200,169,110,0.2);opacity:0}
+.hero-meta-item{font-family:var(--font-mono);font-size:0.6rem;letter-spacing:0.2em;color:var(--c-muted);text-transform:uppercase}
+.hero-scroll{position:absolute;right:3rem;bottom:4rem;z-index:2;display:flex;flex-direction:column;align-items:center;gap:0.75rem;opacity:0}
+.hero-scroll span{font-family:var(--font-mono);font-size:0.55rem;letter-spacing:0.25em;color:var(--c-muted);writing-mode:vertical-rl}
+.scroll-line{width:0.5px;height:60px;background:linear-gradient(180deg,var(--c-gold),transparent);animation:scrollPulse 2s ease-in-out infinite}
+@keyframes scrollPulse{0%,100%{transform:scaleY(1);opacity:0.5}50%{transform:scaleY(0.6);opacity:1}}
+
+/* SECTIONS */
+section{padding:8rem 3rem}
+.section-label{font-family:var(--font-mono);font-size:0.6rem;letter-spacing:0.35em;text-transform:uppercase;color:var(--c-gold);margin-bottom:1rem}
+.section-number{font-family:var(--font-display);font-size:0.8rem;color:var(--c-muted);letter-spacing:0.2em;margin-bottom:3rem}
+h2.section-title{font-family:var(--font-display);font-size:clamp(3rem,7vw,6.5rem);line-height:0.9;color:var(--c-white);letter-spacing:0.03em;margin-bottom:4rem}
+
+/* ABOUT */
+#about{background:var(--c-black);position:relative}
+.about-grid{display:grid;grid-template-columns:1fr 1.6fr;gap:8rem;align-items:start}
+.about-left .stat{margin-bottom:3rem}
+.stat-num{font-family:var(--font-display);font-size:5rem;color:var(--c-gold);line-height:1}
+.stat-label{font-family:var(--font-mono);font-size:0.6rem;letter-spacing:0.2em;color:var(--c-muted);text-transform:uppercase;margin-top:0.5rem}
+.about-text p{font-size:1.2rem;line-height:1.85;color:var(--c-cream);font-weight:300;margin-bottom:1.5rem}
+.about-text .highlight{color:var(--c-gold);font-style:italic}
+.divider{height:0.5px;background:linear-gradient(90deg,rgba(200,169,110,0.3),transparent);margin:4rem 0}
+
+/* WORK */
+#work{background:var(--c-dim)}
+.work-intro{max-width:55%;font-size:1.15rem;line-height:1.9;color:var(--c-cream);font-weight:300;margin-bottom:5rem}
+.projects-grid{display:grid;gap:0.5px;background:rgba(200,169,110,0.1)}
+.project-card{background:var(--c-dim);padding:3.5rem 3rem;display:grid;grid-template-columns:1fr 1fr 1fr 80px;align-items:center;gap:2rem;transition:background 0.5s ease;cursor:pointer;position:relative;overflow:hidden}
+.project-card::after{content:'';position:absolute;left:0;bottom:0;width:0;height:0.5px;background:var(--c-gold);transition:width 0.5s cubic-bezier(0.19,1,0.22,1)}
+.project-card:hover{background:var(--c-mid)}
+.project-card:hover::after{width:100%}
+.project-index{font-family:var(--font-mono);font-size:0.65rem;color:var(--c-muted);letter-spacing:0.2em}
+.project-title{font-family:var(--font-display);font-size:2.2rem;letter-spacing:0.05em;color:var(--c-white)}
+.project-role{font-family:var(--font-mono);font-size:0.6rem;letter-spacing:0.2em;color:var(--c-gold);text-transform:uppercase}
+.project-desc{font-size:0.95rem;color:var(--c-muted);line-height:1.7;font-family:var(--font-body)}
+.project-year{font-family:var(--font-display);font-size:1.8rem;color:var(--c-muted);text-align:right}
+.project-tag{display:inline-block;font-family:var(--font-mono);font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;border:0.5px solid rgba(200,169,110,0.4);color:var(--c-gold);padding:0.25rem 0.75rem;margin-top:0.75rem}
+
+/* EXPERIENCE */
+#experience{background:var(--c-black)}
+.exp-timeline{position:relative;padding-left:4rem}
+.exp-timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:0.5px;background:linear-gradient(180deg,var(--c-gold),rgba(200,169,110,0.1))}
+.exp-item{position:relative;padding-bottom:5rem}
+.exp-dot{position:absolute;left:-4rem;top:0.5rem;width:6px;height:6px;background:var(--c-gold);border-radius:50%;transform:translateX(-2.5px)}
+.exp-period{font-family:var(--font-mono);font-size:0.6rem;letter-spacing:0.2em;color:var(--c-gold);margin-bottom:1rem;text-transform:uppercase}
+.exp-company{font-family:var(--font-display);font-size:3.5rem;line-height:1;letter-spacing:0.03em;color:var(--c-white);margin-bottom:0.5rem}
+.exp-role{font-size:1rem;color:var(--c-muted);font-style:italic;margin-bottom:2rem}
+.exp-points{list-style:none;display:flex;flex-direction:column;gap:0.75rem}
+.exp-points li{font-size:0.95rem;color:var(--c-cream);line-height:1.75;padding-left:1.5rem;position:relative;font-weight:300}
+.exp-points li::before{content:'—';position:absolute;left:0;color:var(--c-gold);font-family:var(--font-mono)}
+.exp-films{display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:1.5rem}
+.film-pill{font-family:var(--font-mono);font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;border:0.5px solid rgba(200,169,110,0.3);color:var(--c-muted);padding:0.3rem 0.8rem}
+
+/* SKILLS */
+#skills{background:var(--c-dim)}
+.skills-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3rem}
+.skill-group{border-top:0.5px solid rgba(200,169,110,0.25);padding-top:2rem}
+.skill-group-title{font-family:var(--font-display);font-size:1.6rem;letter-spacing:0.05em;color:var(--c-white);margin-bottom:1.5rem}
+.skill-list{list-style:none;display:flex;flex-direction:column;gap:0.6rem}
+.skill-list li{font-family:var(--font-mono);font-size:0.65rem;letter-spacing:0.15em;color:var(--c-muted);text-transform:uppercase;padding:0.5rem 0;border-bottom:0.5px solid rgba(255,255,255,0.04);transition:color 0.3s}
+.skill-list li:hover{color:var(--c-gold)}
+
+/* AWARDS */
+#awards{background:var(--c-black)}
+.awards-marquee{overflow:hidden;padding:2rem 0;border-top:0.5px solid rgba(200,169,110,0.2);border-bottom:0.5px solid rgba(200,169,110,0.2);margin:3rem 0}
+.marquee-track{display:flex;gap:4rem;animation:marquee 20s linear infinite;white-space:nowrap}
+.marquee-item{font-family:var(--font-display);font-size:1.3rem;letter-spacing:0.08em;color:var(--c-muted);text-transform:uppercase}
+.marquee-item span{color:var(--c-gold);margin:0 1rem}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.awards-list{display:grid;grid-template-columns:1fr 1fr;gap:3rem}
+.award-item{padding:2.5rem 0;border-bottom:0.5px solid rgba(255,255,255,0.06)}
+.award-title{font-family:var(--font-display);font-size:1.8rem;letter-spacing:0.03em;color:var(--c-white);margin-bottom:0.5rem}
+.award-org{font-family:var(--font-mono);font-size:0.6rem;letter-spacing:0.2em;color:var(--c-gold);text-transform:uppercase}
+.award-context{font-size:0.9rem;color:var(--c-muted);margin-top:0.5rem;font-style:italic}
+
+/* CONTACT */
+#contact{background:var(--c-dim);text-align:center;padding:10rem 3rem}
+.contact-eyebrow{font-family:var(--font-mono);font-size:0.6rem;letter-spacing:0.4em;text-transform:uppercase;color:var(--c-gold);margin-bottom:2rem}
+.contact-headline{font-family:var(--font-display);font-size:clamp(4rem,11vw,10rem);line-height:0.88;color:var(--c-white);margin-bottom:3rem}
+.contact-headline em{color:var(--c-gold)}
+.contact-sub{font-size:1.1rem;color:var(--c-muted);font-style:italic;margin-bottom:4rem;max-width:500px;margin-left:auto;margin-right:auto}
+.contact-links{display:flex;justify-content:center;gap:3rem}
+.contact-link{font-family:var(--font-mono);font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--c-white);text-decoration:none;padding:1rem 2.5rem;border:0.5px solid rgba(200,169,110,0.4);transition:all 0.4s ease;display:inline-block}
+.contact-link:hover{background:var(--c-gold);color:var(--c-black);border-color:var(--c-gold)}
+.contact-link.secondary{border-color:rgba(255,255,255,0.15);color:var(--c-muted)}
+.contact-link.secondary:hover{background:rgba(200,169,110,0.1);border-color:var(--c-gold);color:var(--c-gold)}
+
+/* FOOTER */
+footer{padding:2rem 3rem;border-top:0.5px solid rgba(200,169,110,0.1);display:flex;justify-content:space-between;align-items:center}
+footer span{font-family:var(--font-mono);font-size:0.55rem;letter-spacing:0.2em;color:var(--c-muted);text-transform:uppercase}
+
+/* REVEAL ANIMATIONS */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity 0.9s cubic-bezier(0.19,1,0.22,1),transform 0.9s cubic-bezier(0.19,1,0.22,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:0.15s}
+.reveal-delay-2{transition-delay:0.3s}
+.reveal-delay-3{transition-delay:0.45s}
+
+/* MOBILE */
+@media(max-width:768px){
+nav{padding:1.5rem}
+.nav-links{display:none}
+section{padding:5rem 1.5rem}
+.about-grid{grid-template-columns:1fr;gap:3rem}
+.skills-grid{grid-template-columns:1fr}
+.project-card{grid-template-columns:1fr;gap:0.75rem}
+.project-year{text-align:left}
+.awards-list{grid-template-columns:1fr}
+.contact-links{flex-direction:column;align-items:center}
+}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-trail"></div>
+
+<nav>
+  <span class="nav-logo">IS</span>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#work">Work</a></li>
+    <li><a href="#experience">Career</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <span class="nav-index">PGDM · GIM · 2025–27</span>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-vignette"></div>
+  <div class="hero-lines"></div>
+  <div class="hero-content">
+    <p class="hero-tag" id="ht">Production · Strategy · Storytelling</p>
+    <h1 class="hero-name" id="hn">ISHAAN<br><span>SAXENA</span></h1>
+    <p class="hero-sub" id="hs">Where narrative instinct meets operational precision.</p>
+    <div class="hero-meta" id="hm">
+      <div class="hero-meta-item">Media & Entertainment</div>
+      <div class="hero-meta-item">MBA Candidate</div>
+      <div class="hero-meta-item">2+ Years · VFX Production</div>
+      <div class="hero-meta-item">Oscar · Emmy · Awarded Projects</div>
+    </div>
+  </div>
+  <div class="hero-scroll" id="hs2">
+    <span>scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-label reveal">Identity</div>
+  <div class="section-number reveal reveal-delay-1">01</div>
+  <div class="about-grid">
+    <div class="about-left reveal reveal-delay-1">
+      <div class="stat">
+        <div class="stat-num">12+</div>
+        <div class="stat-label">High-Profile Productions</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">100+</div>
+        <div class="stat-label">VFX Crew Managed</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">02</div>
+        <div class="stat-label">Award-Winning Projects</div>
+      </div>
+    </div>
+    <div class="about-text reveal reveal-delay-2">
+      <p>I am a storyteller trained in the pressure cooker of <span class="highlight">Hollywood-scale visual effects</span> — where a single missed frame on Dune or The Last of Us doesn't just cost money, it costs trust.</p>
+      <p>Three years coordinating pipelines across Warner Bros, HBO, and Apple TV+ taught me that the best creative work is built on invisible systems. Now, at <span class="highlight">Goa Institute of Management</span>, I'm architecting the business mind to match the creative instinct.</p>
+      <p>My direction: the intersection of media, strategy, and brand — where stories are also assets, and every frame has a ROI.</p>
+      <div class="divider"></div>
+      <p style="font-size:0.85rem;font-family:var(--font-mono);letter-spacing:0.15em;color:var(--c-muted)">BBA · BSSS &nbsp;&nbsp;|&nbsp;&nbsp; M.A. Mass Communication · SIMC &nbsp;&nbsp;|&nbsp;&nbsp; PGDM · GIM</p>
+    </div>
+  </div>
+</section>
+
+<!-- WORK -->
+<section id="work">
+  <div class="section-label reveal">Selected Work</div>
+  <div class="section-number reveal reveal-delay-1">02</div>
+  <h2 class="section-title reveal reveal-delay-2">PROJECTS</h2>
+  <p class="work-intro reveal reveal-delay-3">A curated collection of productions, creative ventures, and strategic work — each a chapter in building fluency across storytelling and business.</p>
+
+  <div class="projects-grid reveal">
+
+    <div class="project-card">
+      <div>
+        <div class="project-index">001</div>
+      </div>
+      <div>
+        <div class="project-title">DUNE: PART TWO</div>
+        <div class="project-tag">VFX Production · 2024</div>
+      </div>
+      <div>
+        <div class="project-role">Production Assistant</div>
+        <div class="project-desc">Coordinated VFX pipelines for the Oscar-winning visual effects team at DNEG. Managed 100+ crew, shot tracking, and cross-studio delivery for Warner Bros.</div>
+      </div>
+      <div class="project-year">24</div>
+    </div>
+
+    <div class="project-card">
+      <div>
+        <div class="project-index">002</div>
+      </div>
+      <div>
+        <div class="project-title">THE LAST OF US</div>
+        <div class="project-tag">VFX Production · 2023</div>
+      </div>
+      <div>
+        <div class="project-role">Production Assistant</div>
+        <div class="project-desc">Part of the Emmy-winning VFX compositing team at DNEG for HBO. Oversaw asset tracking, SLA delivery, and departmental coordination across international studios.</div>
+      </div>
+      <div class="project-year">23</div>
+    </div>
+
+    <div class="project-card">
+      <div>
+        <div class="project-index">003</div>
+      </div>
+      <div>
+        <div class="project-title">MASTERS OF THE AIR</div>
+        <div class="project-tag">VFX Production · 2024</div>
+      </div>
+      <div>
+        <div class="project-role">Production Lead</div>
+        <div class="project-desc">Led high-stakes deadline pipeline for Apple TV+ WWII epic. Managed task prioritization, daily reports and progress schedules ensuring seamless delivery SLAs.</div>
+      </div>
+      <div class="project-year">24</div>
+    </div>
+
+    <div class="project-card">
+      <div>
+        <div class="project-index">004</div>
+      </div>
+      <div>
+        <div class="project-title">FLAWED</div>
+        <div class="project-tag">Documentary · 2022</div>
+      </div>
+      <div>
+        <div class="project-role">Director / Cinematographer</div>
+        <div class="project-desc">Dissertation documentary exploring body image, identity, and social expectation. Spearheaded pre-production, cinematography, editing, and direction for SIMC.</div>
+      </div>
+      <div class="project-year">22</div>
+    </div>
+
+    <div class="project-card">
+      <div>
+        <div class="project-index">005</div>
+      </div>
+      <div>
+        <div class="project-title">GOING ROGUE FILMS</div>
+        <div class="project-tag">Strategy · Creative · Intern</div>
+      </div>
+      <div>
+        <div class="project-role">Creative Strategist</div>
+        <div class="project-desc">Market research, ROI analysis and script development for an indie short film and digital advertisement targeting festival circuits through lean creative strategy.</div>
+      </div>
+      <div class="project-year">21</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-label reveal">Career</div>
+  <div class="section-number reveal reveal-delay-1">03</div>
+  <h2 class="section-title reveal reveal-delay-2">TIMELINE</h2>
+
+  <div class="exp-timeline">
+    <div class="exp-item reveal">
+      <div class="exp-dot"></div>
+      <div class="exp-period">September 2022 – May 2025 · London / Remote</div>
+      <div class="exp-company">DNEG</div>
+      <div class="exp-role">VFX Department — Production Assistant</div>
+      <ul class="exp-points">
+        <li>Orchestrated cross-functional coordination across Warner Bros, HBO and Apple TV+ studios for 12+ high-profile productions</li>
+        <li>Led asset tracking, production scheduling, and task prioritization ensuring delivery SLAs across global pipelines</li>
+        <li>Managed 100+ crew across high-stake, deadline-intensive productions under intense operational pressure</li>
+        <li>Leveraged ShotGrid, XStudio, and Tractor to manage shot assignments, track asset status, and automate render queues</li>
+        <li>Acted as liaison between internal departments and external stakeholders, resolving communication gaps proactively</li>
+      </ul>
+      <div class="exp-films">
+        <span class="film-pill">Dune: Part Two</span>
+        <span class="film-pill">The Last of Us</span>
+        <span class="film-pill">Star Wars: Skeleton Crew</span>
+        <span class="film-pill">Furiosa</span>
+        <span class="film-pill">Masters of the Air</span>
+      </div>
+    </div>
+
+    <div class="exp-item reveal reveal-delay-1">
+      <div class="exp-dot"></div>
+      <div class="exp-period">2020 – 2022 · Pune</div>
+      <div class="exp-company">SIMC</div>
+      <div class="exp-role">M.A. Mass Communication — Academic & Creative Work</div>
+      <ul class="exp-points">
+        <li>Directed dissertation documentary Flawed — pre-production through post-production</li>
+        <li>Interned at MP Madhyam contributing to government-backed audio-visual content scripting</li>
+        <li>Won multiple national filmmaking competitions at IIM Kozhikode and IIT Jammu</li>
+      </ul>
+    </div>
+
+    <div class="exp-item reveal reveal-delay-2">
+      <div class="exp-dot"></div>
+      <div class="exp-period">2017 – 2020 · Bhopal</div>
+      <div class="exp-company">BSSS</div>
+      <div class="exp-role">BBA — Foundations in Business & Creative Leadership</div>
+      <ul class="exp-points">
+        <li>Co-founded BSSS Cinemates — directed short film Hope which won the IFP 24-Hour Filmmaking Challenge</li>
+        <li>Served as Technical Captain — oversaw AV production of major college events</li>
+        <li>Represented college at Mood Indigo IIT Bombay, leading influencer marketing campaigns</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-label reveal">Capabilities</div>
+  <div class="section-number reveal reveal-delay-1">04</div>
+  <h2 class="section-title reveal reveal-delay-2">CRAFT</h2>
+
+  <div class="skills-grid">
+    <div class="skill-group reveal">
+      <div class="skill-group-title">Production</div>
+      <ul class="skill-list">
+        <li>VFX Pipeline Management</li>
+        <li>ShotGrid / XStudio / Tractor</li>
+        <li>Asset Tracking & Delivery</li>
+        <li>Cross-Studio Coordination</li>
+        <li>Scheduling & SLA Management</li>
+      </ul>
+    </div>
+    <div class="skill-group reveal reveal-delay-1">
+      <div class="skill-group-title">Creative</div>
+      <ul class="skill-list">
+        <li>Direction & Cinematography</li>
+        <li>Scriptwriting & Research</li>
+        <li>Brand Storytelling</li>
+        <li>Content Strategy</li>
+        <li>Design Thinking</li>
+      </ul>
+    </div>
+    <div class="skill-group reveal reveal-delay-2">
+      <div class="skill-group-title">Strategy</div>
+      <ul class="skill-list">
+        <li>Business Strategy (MECE/SWOT)</li>
+        <li>Market Research & ROI</li>
+        <li>Advanced Prompt Engineering</li>
+        <li>Stakeholder Management</li>
+        <li>BCG Strategy Frameworks</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- AWARDS -->
+<section id="awards">
+  <div class="section-label reveal">Recognition</div>
+  <div class="section-number reveal reveal-delay-1">05</div>
+  <h2 class="section-title reveal reveal-delay-2">HONORS</h2>
+
+  <div class="awards-marquee">
+    <div class="marquee-track">
+      <span class="marquee-item">Oscar-Winning Team <span>·</span></span>
+      <span class="marquee-item">Emmy-Winning Team <span>·</span></span>
+      <span class="marquee-item">IIM Kozhikode — 1st Place <span>·</span></span>
+      <span class="marquee-item">IIT Jammu — 1st Prize <span>·</span></span>
+      <span class="marquee-item">Director in the Making Award <span>·</span></span>
+      <span class="marquee-item">Oscar-Winning Team <span>·</span></span>
+      <span class="marquee-item">Emmy-Winning Team <span>·</span></span>
+      <span class="marquee-item">IIM Kozhikode — 1st Place <span>·</span></span>
+      <span class="marquee-item">IIT Jammu — 1st Prize <span>·</span></span>
+      <span class="marquee-item">Director in the Making Award <span>·</span></span>
+    </div>
+  </div>
+
+  <div class="awards-list">
+    <div class="award-item reveal">
+      <div class="award-title">DUNE: PART TWO</div>
+      <div class="award-org">DNEG · Oscar-Winning VFX Team</div>
+      <div class="award-context">Visual Effects Compositing · 97th Academy Awards, 2025</div>
+    </div>
+    <div class="award-item reveal reveal-delay-1">
+      <div class="award-title">THE LAST OF US</div>
+      <div class="award-org">DNEG · Emmy-Winning VFX Team</div>
+      <div class="award-context">Visual Effects Compositing · 75th Primetime Emmy Awards, 2023</div>
+    </div>
+    <div class="award-item reveal reveal-delay-2">
+      <div class="award-title">CALICO TALKIES</div>
+      <div class="award-org">IIM Kozhikode · 1st Place</div>
+      <div class="award-context">Short Film Pinjra · Filmmaking Competition, 2021</div>
+    </div>
+    <div class="award-item reveal reveal-delay-3">
+      <div class="award-title">DIRECTOR IN THE MAKING</div>
+      <div class="award-org">SIMC Farewell Award</div>
+      <div class="award-context">Honoured for creative leadership and direction excellence, 2022</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-eyebrow reveal">Available for opportunities</div>
+  <h2 class="contact-headline reveal reveal-delay-1">LET'S<br><em>CREATE</em><br>TOGETHER</h2>
+  <p class="contact-sub reveal reveal-delay-2">Whether it's a brand story, a production venture, or a strategy conversation — I'm always open to what comes next.</p>
+  <div class="contact-links reveal reveal-delay-3">
+    <a class="contact-link" href="mailto:ishaan.saxena25@gim.ac.in">Email Me</a>
+    <a class="contact-link secondary" href="tel:+917879406854">+91 78794 06854</a>
+  </div>
+</section>
+
+<footer>
+  <span>Ishaan Saxena © 2025</span>
+  <span>GIM Corporate Recruitment 2025–26</span>
+  <span>Mumbai · Goa</span>
+</footer>
+
+<script>
+const cursor = document.getElementById('cursor');
+const trail = document.getElementById('cursor-trail');
+let mx=0,my=0,tx=0,ty=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX; my=e.clientY;
+  cursor.style.transform=`translate(${mx-4}px,${my-4}px)`;
+});
+function animTrail(){
+  tx+=(mx-tx)*0.12; ty+=(my-ty)*0.12;
+  trail.style.transform=`translate(${tx-18}px,${ty-18}px)`;
+  requestAnimationFrame(animTrail);
+}
+animTrail();
+
+document.querySelectorAll('a,button,.project-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cursor.style.transform+=' scale(2)';trail.style.opacity='0.1'});
+  el.addEventListener('mouseleave',()=>{cursor.style.transform=cursor.style.transform.replace(' scale(2)','');trail.style.opacity='0.4'});
+});
+
+setTimeout(()=>{
+  document.querySelector('.nav-logo').style.opacity='1';
+  document.querySelector('.nav-logo').style.transition='opacity 1s ease';
+  const ht=document.getElementById('ht');
+  const hn=document.getElementById('hn');
+  const hs=document.getElementById('hs');
+  const hm=document.getElementById('hm');
+  const hs2=document.getElementById('hs2');
+  ht.style.transition='opacity 1s ease, transform 1s cubic-bezier(0.19,1,0.22,1)';
+  ht.style.opacity='1'; ht.style.transform='translateY(0)';
+  setTimeout(()=>{
+    hn.style.transition='opacity 1.2s ease, transform 1.2s cubic-bezier(0.19,1,0.22,1)';
+    hn.style.opacity='1'; hn.style.transform='translateY(0)';
+  },200);
+  setTimeout(()=>{
+    hs.style.transition='opacity 1s ease, transform 1s cubic-bezier(0.19,1,0.22,1)';
+    hs.style.opacity='0.7'; hs.style.transform='translateY(0)';
+  },500);
+  setTimeout(()=>{
+    hm.style.transition='opacity 1.2s ease';
+    hm.style.opacity='1';
+    hs2.style.transition='opacity 1.2s ease';
+    hs2.style.opacity='1';
+  },900);
+},300);
+
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target)}
+  });
+},{threshold:0.12});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+document.querySelectorAll('.project-card').forEach(card=>{
+  card.addEventListener('mouseenter',()=>{card.style.paddingLeft='3.5rem'});
+  card.addEventListener('mouseleave',()=>{card.style.paddingLeft='3rem'});
+  card.style.transition='background 0.5s ease, padding-left 0.4s cubic-bezier(0.19,1,0.22,1)';
+});
+</script>
+</body>
+</html>
